@@ -5,6 +5,8 @@ export declare class BasicsController {
     getMyFirstGet(): object;
     getConParametros(parametro: string): object;
     create(bodyPost: object): object;
-    update(id: string, bodyPost: object): object;
+    update(bodyPost: object, id: string): object;
     delete(id: string): object;
+    calculoTriangulo(bodyPost: object): object;
+    areaRectangulo(ancho: number, alto: number): object;
 }

@@ -18,7 +18,7 @@ let BasicsService = class BasicsService {
     }
     getConParametros(parametro) {
         return {
-            service: 'Blog-Bakend',
+            service: 'Blog-Backend',
             controller: '/basics/:parametro',
             function: 'Get con Parametros',
             parametroRecibido: parametro
@@ -27,8 +27,8 @@ let BasicsService = class BasicsService {
     postFunction(bodyPost) {
         return {
             service: 'Blog-Backend',
-            controller: '/basics/:parametro',
-            function: 'Ejemplo de peticion Post',
+            controller: '/basics tipo post',
+            function: 'Ejemplo de petición Post',
             bodyRecibido: bodyPost
         };
     }
@@ -36,8 +36,8 @@ let BasicsService = class BasicsService {
         return {
             service: 'Blog-Backend',
             controller: '/basics tipo put',
-            function: 'Ejemplo de Peticion Put',
-            body: bodyPost,
+            function: 'Ejemplo de petición Put',
+            bodyRecibido: bodyPost,
             parametro: parametro
         };
     }
@@ -45,8 +45,29 @@ let BasicsService = class BasicsService {
         return {
             service: 'Blog-Backend',
             controller: '/basics tipo delete',
-            function: 'Ejemplo de Peticion Delete',
+            function: 'Ejemplo de petición Delete',
             parametro: parametro
+        };
+    }
+    calculoTriangulo(body) {
+        const result = (body.base * body.altura) / 2;
+        return {
+            service: 'Blog-Backend',
+            controller: '/calculo-area-triangulo',
+            function: 'Calculo del area de un triangulo',
+            parametro: body,
+            resultado: result
+        };
+    }
+    areaRectangulo(ancho, alto) {
+        const result = ancho * alto;
+        return {
+            service: 'Blog-Backend',
+            controller: '/basics tipo delete',
+            function: 'calculo-area-rectangulo/:ancho/:alto',
+            ancho: ancho,
+            alto: alto,
+            resultado: result
         };
     }
 };
