@@ -1,4 +1,5 @@
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
+import { UserRole } from '../user-role.anum';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -16,4 +17,8 @@ export class UpdateUserDto {
 
   @IsOptional()
   isActive?: boolean;
+
+  @IsOptional()
+  @IsEnum(UserRole)
+  role?: UserRole;
 }

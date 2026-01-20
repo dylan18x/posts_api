@@ -6,14 +6,6 @@ import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
-interface CategoryPaginationOptions extends IPaginationOptions {
-  search?: string;
-  searchField?: string;
-  sortBy?: string;
-  sortOrder?: 'ASC' | 'DESC';
-}
-
-
 @Injectable()
 export class CategoriesService {
   constructor(
@@ -31,27 +23,48 @@ export class CategoriesService {
     }
   }
 
-  async findAll(options: CategoryPaginationOptions): Promise<Pagination<Category>> {
-    const { search, searchField, sortBy, sortOrder } = options;
-    const queryBuilder = this.categoryRepo.createQueryBuilder('category');
-    const allowedSearchFields = ['name'];
-    const allowedSortFields = ['id', 'name'];
-    if (search && searchField && allowedSearchFields.includes(searchField)) {
-      queryBuilder.andWhere(
-        `LOWER(category.${searchField}) LIKE :search`,
-        { search: `%${search.toLowerCase()}%` },
-      );
+  async findAll(options: any): Promise<Pagination<Category> | null> {
+    try {
+      const { search, searchField, sort, order, page, limit } = options;
+
+      const queryBuilder = this.categoryRepo.createQueryBuilder('category');
+
+      const allowedSearchFields = ['name', 'description'];
+      const allowedSortFields = ['id', 'name'];
+
+      // 🔍 BÚSQUEDA
+      if (search) {
+        if (searchField && allowedSearchFields.includes(searchField)) {
+          queryBuilder.where(
+            `category.${searchField} ILIKE :search`,
+            { search: `%${search}%` },
+          );
+        } else {
+          queryBuilder.where(
+            '(category.name ILIKE :search OR category.description ILIKE :search)',
+            { search: `%${search}%` },
+          );
+        }
+      }
+
+      // 🔃 ORDENAMIENTO
+      const orderField =
+        sort && allowedSortFields.includes(sort) ? sort : 'id';
+
+      const orderDirection: 'ASC' | 'DESC' =
+        order === 'DESC' ? 'DESC' : 'ASC';
+
+      queryBuilder.orderBy(`category.${orderField}`, orderDirection);
+
+      // 📄 PAGINACIÓN
+      return await paginate<Category>(queryBuilder, {
+        page,
+        limit,
+      });
+    } catch (err) {
+      console.error('Error finding categories:', err);
+      return null;
     }
-    const orderField = sortBy && allowedSortFields.includes(sortBy) ? sortBy : 'id';
-    const orderDirection: 'ASC' | 'DESC' =
-      sortOrder === 'DESC' ? 'DESC' : 'ASC';
-
-    queryBuilder.orderBy(`category.${orderField}`, orderDirection);
-
-    return paginate<Category>(queryBuilder, {
-      page: options.page,
-      limit: options.limit,
-    });
   }
 
   async findOne(id: string): Promise<Category | null> {
